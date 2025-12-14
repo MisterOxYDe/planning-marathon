@@ -1,25 +1,79 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planning Marathon</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Planning Marathon 2026</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: auto;
+      padding: 1rem;
+      background: #f9f9f9;
+      color: #222;
+    }
+    h1 {
+      text-align: center;
+    }
+    #navigation, #viewSelector {
+      text-align: center;
+      margin: 1rem 0;
+    }
+    button {
+      margin: 0 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .session {
+      background: white;
+      border-radius: 5px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background-color: #eee;
+    }
+    .dateCell {
+      font-weight: bold;
+      width: 110px;
+      white-space: nowrap;
+    }
+    .noData {
+      color: #888;
+      font-style: italic;
+    }
+  </style>
 </head>
-
 <body>
-  <h1>🏃‍♂️ Planning Marathon</h1>
-  <h2 id="date"></h2>
+  <h1>Planning Marathon 2026</h1>
 
-  <div class="session">
-    <h3>🌅 Matin</h3>
-    <label><input type="checkbox" id="morning"> <span id="morningText"></span></label>
+  <div id="viewSelector">
+    <button id="viewDay">Vue Jour</button>
+    <button id="viewWeek">Vue Semaine</button>
+    <button id="viewMonth">Vue Mois</button>
   </div>
 
-  <div class="session">
-    <h3>🌙 Soir</h3>
-    <label><input type="checkbox" id="evening"> <span id="eveningText"></span></label>
+  <div id="navigation">
+    <button id="prevDay">← Précédent</button>
+    <button id="nextDay">Suivant →</button>
+  </div>
+
+  <div id="content">
+    <!-- Contenu dynamique ici -->
   </div>
 
   <script src="app.js"></script>
