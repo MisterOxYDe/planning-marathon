@@ -144,28 +144,134 @@ const planning = {
   "2026-04-04": {morning: "Repos", evening: "Repos"},
 };
 
-const today = new Date().toISOString().slice(0,10);
-document.getElementById("date").innerText = today;
+// Variables globales
+let currentDate = new Date().toISOString().slice(0, 10);
+let currentView = "day"; // "day", "week", "month"
 
-if (planning[today]) {
-  document.getElementById("morningText").innerText = planning[today].morning;
-  document.getElementById("eveningText").innerText = planning[today].evening;
-} else {
-  document.getElementById("morningText").innerText = "Repos";
-  document.getElementById("eveningText").innerText = "Repos";
+// Utilitaires date
+function formatDate(date) {
+  return date.toISOString().slice(0, 10);
 }
 
-// sauvegarde des checks
-document.getElementById("morning").checked =
-  localStorage.getItem(today + "-morning") === "true";
+function formatDisplayDate(date) {
+  return date.toLocaleDateString("fr-FR", { weekday: 'short', day: 'numeric', month: 'short' });
+}
 
-document.getElementById("evening").checked =
-  localStorage.getItem(today + "-evening") === "true";
+// Affiche séance d’un jour
+function renderDay(dateStr) {
+  const seance = planning[dateStr];
+  const content = document.getElementById("content");
+  content.innerHTML = `
+    <div class="session">
+      <h2>Planning du ${formatDisplayDate(new Date(dateStr))}</h2>
+      <p><strong>Matin :</strong> ${seance?.morning || "<span class='noData'>Repos / Pas de données</span>"}</p>
+      <p><strong>Soir :</strong> ${seance?.evening || "<span class='noData'>Repos / Pas de données</span>"}</p>
+    </div>
+  `;
+}
 
-document.getElementById("morning").addEventListener("change", e =>
-  localStorage.setItem(today + "-morning", e.target.checked)
-);
+// Affiche séance d’une semaine
+function renderWeek(dateStr) {
+  const content = document.getElementById("content");
+  let date = new Date(dateStr);
+  // Trouve lundi de la semaine
+  const dayOfWeek = date.getDay();
+  const diffToMonday = (dayOfWeek === 0) ? -6 : 1 - dayOfWeek;
+  date.setDate(date.getDate() + diffToMonday);
 
-document.getElementById("evening").addEventListener("change", e =>
-  localStorage.setItem(today + "-evening", e.target.checked)
-);
+  let html = `<h2>Planning semaine du ${formatDisplayDate(date)} au ${formatDisplayDate(new Date(date.getTime() + 6*24*60*60*1000))}</h2>`;
+  html += `<table><thead><tr><th>Date</th><th>Matin</th><th>Soir</th></tr></thead><tbody>`;
+
+  for(let i=0; i<7; i++) {
+    const dStr = formatDate(date);
+    const seance = planning[dStr];
+    html += `<tr>
+      <td class="dateCell">${formatDisplayDate(new Date(dStr))}</td>
+      <td>${seance?.morning || "<span class='noData'>Repos / Pas de données</span>"}</td>
+      <td>${seance?.evening || "<span class='noData'>Repos / Pas de données</span>"}</td>
+    </tr>`;
+    date.setDate(date.getDate() +1);
+  }
+  html += `</tbody></table>`;
+  content.innerHTML = html;
+}
+
+// Affiche séance d’un mois
+function renderMonth(dateStr) {
+  const content = document.getElementById("content");
+  let date = new Date(dateStr);
+  const year = date.getFullYear();
+  const month = date.getMonth();
+
+  // Premier jour du mois
+  let firstDay = new Date(year, month, 1);
+  // Dernier jour du mois
+  let lastDay = new Date(year, month +1, 0);
+
+  let html = `<h2>Planning du mois de ${firstDay.toLocaleDateString("fr-FR", { month: 'long', year: 'numeric' })}</h2>`;
+  html += `<table><thead><tr><th>Date</th><th>Matin</th><th>Soir</th></tr></thead><tbody>`;
+
+  for(let d = firstDay; d <= lastDay; d.setDate(d.getDate()+1)) {
+    const dStr = formatDate(d);
+    const seance = planning[dStr];
+    html += `<tr>
+      <td class="dateCell">${formatDisplayDate(new Date(dStr))}</td>
+      <td>${seance?.morning || "<span class='noData'>Repos / Pas de données</span>"}</td>
+      <td>${seance?.evening || "<span class='noData'>Repos / Pas de données</span>"}</td>
+    </tr>`;
+  }
+
+  html += `</tbody></table>`;
+  content.innerHTML = html;
+}
+
+// Affiche selon la vue courante
+function render() {
+  switch(currentView) {
+    case "day":
+      renderDay(currentDate);
+      break;
+    case "week":
+      renderWeek(currentDate);
+      break;
+    case "month":
+      renderMonth(currentDate);
+      break;
+  }
+}
+
+// Navigation jours
+document.getElementById("prevDay").addEventListener("click", () => {
+  let d = new Date(currentDate);
+  if(currentView === "day") d.setDate(d.getDate() - 1);
+  else if(currentView === "week") d.setDate(d.getDate() - 7);
+  else if(currentView === "month") d.setMonth(d.getMonth() -1);
+  currentDate = formatDate(d);
+  render();
+});
+
+document.getElementById("nextDay").addEventListener("click", () => {
+  let d = new Date(currentDate);
+  if(currentView === "day") d.setDate(d.getDate() + 1);
+  else if(currentView === "week") d.setDate(d.getDate() + 7);
+  else if(currentView === "month") d.setMonth(d.getMonth() +1);
+  currentDate = formatDate(d);
+  render();
+});
+
+// Changement de vue
+document.getElementById("viewDay").addEventListener("click", () => {
+  currentView = "day";
+  render();
+});
+document.getElementById("viewWeek").addEventListener("click", () => {
+  currentView = "week";
+  render();
+});
+document.getElementById("viewMonth").addEventListener("click", () => {
+  currentView = "month";
+  render();
+});
+
+// Affichage initial
+render();
