@@ -144,134 +144,82 @@ const planning = {
   "2026-04-04": {morning: "Repos", evening: "Repos"},
 };
 
-// Variables globales
-let currentDate = new Date().toISOString().slice(0, 10);
-let currentView = "day"; // "day", "week", "month"
+// === CALENDRIER ===
+let current = new Date();
 
-// Utilitaires date
-function formatDate(date) {
-  return date.toISOString().slice(0, 10);
-}
+const calendarEl = document.getElementById("calendar");
+const monthLabel = document.getElementById("monthLabel");
 
-function formatDisplayDate(date) {
-  return date.toLocaleDateString("fr-FR", { weekday: 'short', day: 'numeric', month: 'short' });
-}
+function renderCalendar() {
+  calendarEl.innerHTML = "";
 
-// Affiche séance d’un jour
-function renderDay(dateStr) {
-  const seance = planning[dateStr];
-  const content = document.getElementById("content");
-  content.innerHTML = `
-    <div class="session">
-      <h2>Planning du ${formatDisplayDate(new Date(dateStr))}</h2>
-      <p><strong>Matin :</strong> ${seance?.morning || "<span class='noData'>Repos / Pas de données</span>"}</p>
-      <p><strong>Soir :</strong> ${seance?.evening || "<span class='noData'>Repos / Pas de données</span>"}</p>
-    </div>
-  `;
-}
+  const year = current.getFullYear();
+  const month = current.getMonth();
 
-// Affiche séance d’une semaine
-function renderWeek(dateStr) {
-  const content = document.getElementById("content");
-  let date = new Date(dateStr);
-  // Trouve lundi de la semaine
-  const dayOfWeek = date.getDay();
-  const diffToMonday = (dayOfWeek === 0) ? -6 : 1 - dayOfWeek;
-  date.setDate(date.getDate() + diffToMonday);
+  monthLabel.innerText = current.toLocaleDateString("fr-FR", {
+    month: "long",
+    year: "numeric"
+  });
 
-  let html = `<h2>Planning semaine du ${formatDisplayDate(date)} au ${formatDisplayDate(new Date(date.getTime() + 6*24*60*60*1000))}</h2>`;
-  html += `<table><thead><tr><th>Date</th><th>Matin</th><th>Soir</th></tr></thead><tbody>`;
+  const firstDay = new Date(year, month, 1);
+  const startDay = (firstDay.getDay() + 6) % 7;
 
-  for(let i=0; i<7; i++) {
-    const dStr = formatDate(date);
-    const seance = planning[dStr];
-    html += `<tr>
-      <td class="dateCell">${formatDisplayDate(new Date(dStr))}</td>
-      <td>${seance?.morning || "<span class='noData'>Repos / Pas de données</span>"}</td>
-      <td>${seance?.evening || "<span class='noData'>Repos / Pas de données</span>"}</td>
-    </tr>`;
-    date.setDate(date.getDate() +1);
-  }
-  html += `</tbody></table>`;
-  content.innerHTML = html;
-}
+  ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].forEach(d => {
+    const el = document.createElement("div");
+    el.className = "day-name";
+    el.innerText = d;
+    calendarEl.appendChild(el);
+  });
 
-// Affiche séance d’un mois
-function renderMonth(dateStr) {
-  const content = document.getElementById("content");
-  let date = new Date(dateStr);
-  const year = date.getFullYear();
-  const month = date.getMonth();
-
-  // Premier jour du mois
-  let firstDay = new Date(year, month, 1);
-  // Dernier jour du mois
-  let lastDay = new Date(year, month +1, 0);
-
-  let html = `<h2>Planning du mois de ${firstDay.toLocaleDateString("fr-FR", { month: 'long', year: 'numeric' })}</h2>`;
-  html += `<table><thead><tr><th>Date</th><th>Matin</th><th>Soir</th></tr></thead><tbody>`;
-
-  for(let d = firstDay; d <= lastDay; d.setDate(d.getDate()+1)) {
-    const dStr = formatDate(d);
-    const seance = planning[dStr];
-    html += `<tr>
-      <td class="dateCell">${formatDisplayDate(new Date(dStr))}</td>
-      <td>${seance?.morning || "<span class='noData'>Repos / Pas de données</span>"}</td>
-      <td>${seance?.evening || "<span class='noData'>Repos / Pas de données</span>"}</td>
-    </tr>`;
+  for (let i = 0; i < startDay; i++) {
+    calendarEl.appendChild(document.createElement("div"));
   }
 
-  html += `</tbody></table>`;
-  content.innerHTML = html;
-}
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-// Affiche selon la vue courante
-function render() {
-  switch(currentView) {
-    case "day":
-      renderDay(currentDate);
-      break;
-    case "week":
-      renderWeek(currentDate);
-      break;
-    case "month":
-      renderMonth(currentDate);
-      break;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(year, month, d);
+    const iso = date.toISOString().slice(0,10);
+    const cell = document.createElement("div");
+    cell.className = "day";
+
+    cell.innerHTML = `<div class="day-number">${d}</div>`;
+
+    if (planning[iso]) {
+      const dot = document.createElement("div");
+      dot.className = "dot";
+      cell.appendChild(dot);
+    }
+
+    cell.onclick = () => openModal(iso);
+    calendarEl.appendChild(cell);
   }
 }
 
-// Navigation jours
-document.getElementById("prevDay").addEventListener("click", () => {
-  let d = new Date(currentDate);
-  if(currentView === "day") d.setDate(d.getDate() - 1);
-  else if(currentView === "week") d.setDate(d.getDate() - 7);
-  else if(currentView === "month") d.setMonth(d.getMonth() -1);
-  currentDate = formatDate(d);
-  render();
-});
+document.getElementById("prevMonth").onclick = () => {
+  current.setMonth(current.getMonth() - 1);
+  renderCalendar();
+};
 
-document.getElementById("nextDay").addEventListener("click", () => {
-  let d = new Date(currentDate);
-  if(currentView === "day") d.setDate(d.getDate() + 1);
-  else if(currentView === "week") d.setDate(d.getDate() + 7);
-  else if(currentView === "month") d.setMonth(d.getMonth() +1);
-  currentDate = formatDate(d);
-  render();
-});
+document.getElementById("nextMonth").onclick = () => {
+  current.setMonth(current.getMonth() + 1);
+  renderCalendar();
+};
 
-// Changement de vue
-document.getElementById("viewDay").addEventListener("click", () => {
-  currentView = "day";
-  render();
-});
-document.getElementById("viewWeek").addEventListener("click", () => {
-  currentView = "week";
-  render();
-});
-document.getElementById("viewMonth").addEventListener("click", () => {
-  currentView = "month";
-  render();
-});
+// === MODAL ===
+function openModal(date) {
+  const data = planning[date];
+  document.getElementById("modalDate").innerText =
+    new Date(date).toLocaleDateString("fr-FR", { weekday:"long", day:"numeric", month:"long" });
 
-// Affichage initial
-render();
+  document.getElementById("modalMorning").innerText = data?.morning || "Repos";
+  document.getElementById("modalEvening").innerText = data?.evening || "Repos";
+
+  document.getElementById("dayModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("dayModal").style.display = "none";
+}
+
+renderCalendar();
