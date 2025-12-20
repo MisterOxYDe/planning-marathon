@@ -234,5 +234,27 @@ document.getElementById("nextMonth").onclick = () => {
   renderCalendar();
 };
 
+const params = new URLSearchParams(window.location.search);
+const token = params.get("token");
+
+if (token) {
+  fetch(`http://localhost:3000/activities?token=${token}`)
+    .then(res => res.json())
+    .then(data => displayActivities(data));
+}
+
+function displayActivities(activities) {
+  const list = document.getElementById("activitiesList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  activities.forEach(a => {
+    const li = document.createElement("li");
+    li.innerText = `${a.type} – ${(a.distance / 1000).toFixed(1)} km – ${Math.round(a.moving_time / 60)} min`;
+    list.appendChild(li);
+  });
+}
+
 // Initialisation
 renderCalendar();
