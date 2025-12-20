@@ -1,139 +1,42 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Marathon Trainer</title>
-
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      margin: 0;
-      padding: 1rem;
-      background: #f6f7f9;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    h1 {
-      font-size: 1.2rem;
-      margin: 0;
-    }
-
-    .month-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 1rem 0;
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
-
-    .calendar {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 6px;
-    }
-
-    .day-names {
-      margin-bottom: 6px;
-    }
-
-    .day-name {
-      text-align: center;
-      font-size: 0.8rem;
-      color: #666;
-    }
-
-    .day {
-      background: white;
-      border-radius: 10px;
-      padding: 6px;
-      min-height: 60px;
-      position: relative;
-      cursor: pointer;
-    }
-
-    .day-number {
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .dot {
-      position: absolute;
-      bottom: 6px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #ff9f43;
-    }
-
-    /* MODAL */
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      display: none;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-content {
-      background: white;
-      border-radius: 12px;
-      padding: 1rem;
-      width: 90%;
-      max-width: 400px;
-    }
-
-    .modal h2 {
-      margin-top: 0;
-    }
-
-    .close {
-      text-align: right;
-      cursor: pointer;
-      font-weight: bold;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header>
-  <h1>🏆 Marathon Trainer</h1>
-  <button>Importer</button>
-</header>
+<div class="page">
+  <header>
+    <h1>📊 Dashboard</h1>
+  </header>
 
-<div class="month-nav">
-  <button id="prevMonth">‹</button>
-  <div id="monthLabel"></div>
-  <button id="nextMonth">›</button>
+  <p>À venir :</p>
+  <ul>
+    <li>Kilomètres semaine / mois</li>
+    <li>Temps total</li>
+    <li>Charge d’entraînement</li>
+    <li>Graphiques</li>
+  </ul>
 </div>
 
-<!-- JOURS -->
-<div class="calendar day-names" id="dayNames"></div>
+<!-- TAB BAR -->
+<nav class="tab-bar">
+  <a class="tab active" href="index.html">
+    <span>📊</span>
+    Dashboard
+  </a>
+  <a class="tab" href="calendar.html">
+    <span>📅</span>
+    Calendrier
+  </a>
+  <a class="tab" href="activities.html">
+    <span>🏃</span>
+    Activités
+  </a>
+</nav>
 
-<!-- CALENDRIER -->
-<div class="calendar" id="calendar"></div>
-
-<!-- MODAL JOUR -->
-<div class="modal" id="dayModal">
-  <div class="modal-content">
-    <div class="close" onclick="closeModal()">✕</div>
-    <h2 id="modalDate"></h2>
-    <p><strong>Matin :</strong> <span id="modalMorning"></span></p>
-    <p><strong>Soir :</strong> <span id="modalEvening"></span></p>
-  </div>
-</div>
-
-<script src="app.js"></script>
 </body>
 </html>
