@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calendrier</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="page">
+
+<header>
+  <h1>📅 Calendrier</h1>
+  <button>Importer</button>
+</header>
+
+<div class="month-nav">
+  <button id="prevMonth">‹</button>
+  <div id="monthLabel"></div>
+  <button id="nextMonth">›</button>
+</div>
+
+<div class="calendar day-names" id="dayNames"></div>
+<div class="calendar" id="calendar"></div>
+
+<!-- MODAL -->
+<div class="modal" id="dayModal">
+  <div class="modal-content">
+    <div class="close" onclick="closeModal()">✕</div>
+    <h2 id="modalDate"></h2>
+    <p><strong>Matin :</strong> <span id="modalMorning"></span></p>
+    <p><strong>Soir :</strong> <span id="modalEvening"></span></p>
+  </div>
+</div>
+
+</div>
+
+<nav class="tab-bar">
+  <a class="tab" href="index.html">
+    <span>📊</span>
+    Dashboard
+  </a>
+  <a class="tab active" href="calendar.html">
+    <span>📅</span>
+    Calendrier
+  </a>
+  <a class="tab" href="activities.html">
+    <span>🏃</span>
+    Activités
+  </a>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>
