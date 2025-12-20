@@ -144,11 +144,20 @@ const planning = {
   "2026-04-04": {morning: "Repos", evening: "Repos"},
 };
 
-// === CALENDRIER ===
+// ================= CALENDRIER =================
 let current = new Date();
 
 const calendarEl = document.getElementById("calendar");
 const monthLabel = document.getElementById("monthLabel");
+const dayNamesEl = document.getElementById("dayNames");
+
+// Jours de la semaine (Lundi → Dimanche)
+["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].forEach(d => {
+  const el = document.createElement("div");
+  el.className = "day-name";
+  el.innerText = d;
+  dayNamesEl.appendChild(el);
+});
 
 function renderCalendar() {
   calendarEl.innerHTML = "";
@@ -162,15 +171,9 @@ function renderCalendar() {
   });
 
   const firstDay = new Date(year, month, 1);
-  const startDay = (firstDay.getDay() + 6) % 7;
+  const startDay = (firstDay.getDay() + 6) % 7; // Lundi = 0
 
-  ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].forEach(d => {
-    const el = document.createElement("div");
-    el.className = "day-name";
-    el.innerText = d;
-    calendarEl.appendChild(el);
-  });
-
+  // cases vides avant le 1er du mois
   for (let i = 0; i < startDay; i++) {
     calendarEl.appendChild(document.createElement("div"));
   }
@@ -179,10 +182,10 @@ function renderCalendar() {
 
   for (let d = 1; d <= daysInMonth; d++) {
     const date = new Date(year, month, d);
-    const iso = date.toISOString().slice(0,10);
+    const iso = date.toISOString().slice(0, 10);
+
     const cell = document.createElement("div");
     cell.className = "day";
-
     cell.innerHTML = `<div class="day-number">${d}</div>`;
 
     if (planning[iso]) {
@@ -196,6 +199,31 @@ function renderCalendar() {
   }
 }
 
+// ================= MODAL =================
+function openModal(date) {
+  const data = planning[date];
+
+  document.getElementById("modalDate").innerText =
+    new Date(date).toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long"
+    });
+
+  document.getElementById("modalMorning").innerText =
+    data?.morning || "Repos";
+
+  document.getElementById("modalEvening").innerText =
+    data?.evening || "Repos";
+
+  document.getElementById("dayModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("dayModal").style.display = "none";
+}
+
+// ================= NAVIGATION =================
 document.getElementById("prevMonth").onclick = () => {
   current.setMonth(current.getMonth() - 1);
   renderCalendar();
@@ -206,20 +234,5 @@ document.getElementById("nextMonth").onclick = () => {
   renderCalendar();
 };
 
-// === MODAL ===
-function openModal(date) {
-  const data = planning[date];
-  document.getElementById("modalDate").innerText =
-    new Date(date).toLocaleDateString("fr-FR", { weekday:"long", day:"numeric", month:"long" });
-
-  document.getElementById("modalMorning").innerText = data?.morning || "Repos";
-  document.getElementById("modalEvening").innerText = data?.evening || "Repos";
-
-  document.getElementById("dayModal").style.display = "flex";
-}
-
-function closeModal() {
-  document.getElementById("dayModal").style.display = "none";
-}
-
+// Initialisation
 renderCalendar();
