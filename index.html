@@ -40,6 +40,10 @@
       gap: 6px;
     }
 
+    .day-names {
+      margin-bottom: 6px;
+    }
+
     .day-name {
       text-align: center;
       font-size: 0.8rem;
@@ -53,10 +57,6 @@
       min-height: 60px;
       position: relative;
       cursor: pointer;
-    }
-
-    .day.inactive {
-      opacity: 0.3;
     }
 
     .day-number {
@@ -73,10 +73,6 @@
       height: 10px;
       border-radius: 50%;
       background: #ff9f43;
-    }
-
-    .done {
-      background: #2ecc71;
     }
 
     /* MODAL */
@@ -122,9 +118,11 @@
   <button id="nextMonth">›</button>
 </div>
 
+<!-- JOURS -->
 <div class="calendar day-names" id="dayNames"></div>
-<div class="calendar" id="calendar"></div>
 
+<!-- CALENDRIER -->
+<div class="calendar" id="calendar"></div>
 
 <!-- MODAL JOUR -->
 <div class="modal" id="dayModal">
