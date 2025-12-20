@@ -14,7 +14,14 @@
   <h1>🏃 Activités</h1>
 </header>
 
-<p>Connexion Strava à venir.</p>
+<button onclick="loginStrava()">🔗 Connexion Strava</button>
+<ul id="activitiesList"></ul>
+
+<script>
+function loginStrava() {
+  window.location.href = "http://localhost:3000/login";
+}
+</script>
 
 <ul>
   <li>Course – 10 km – 46’</li>
