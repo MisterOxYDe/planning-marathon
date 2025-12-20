@@ -108,3 +108,41 @@ button {
   cursor: pointer;
   font-size: 1.2rem;
 }
+
+/* ===== TAB BAR ===== */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: white;
+  display: flex;
+  border-top: 1px solid #ddd;
+  z-index: 20;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  font-size: 0.75rem;
+  padding-top: 6px;
+  color: #888;
+  text-decoration: none;
+}
+
+.tab.active {
+  color: #ff9f43;
+  font-weight: 600;
+}
+
+.tab span {
+  display: block;
+  font-size: 1.3rem;
+}
+
+/* Pour éviter que le contenu passe sous la tab bar */
+.page {
+  padding-bottom: 80px;
+}
+
